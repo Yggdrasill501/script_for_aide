@@ -6,7 +6,6 @@ This project automates the process of exporting AIDE logs from Linux servers to 
 
 - [Prerequisites](#prerequisites)
 - [Syslog-ng Configuration](#syslog-ng-configuration)
-- [Python Script](#python-script)
 - [Scheduling the Script](#scheduling-the-script)
 - [Axonius Connector Configuration](#axonius-connector-configuration)
 - [Directory Structure](#directory-structure)
