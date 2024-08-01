@@ -1,15 +1,27 @@
+"""Main module handels exporting logs from AIDE."""
 import os
 import csv
 import re
-from datetime import datetime, timedelta
+import time
 
 # Define log directory and output CSV file
 LOG_DIR = "/var/log/remote/aide"
 CSV_DIR = "/path/to/csv"
-CSV_FILE = os.path.join(CSV_DIR, f"aide_logs_{datetime.now().strftime('%Y%m%d')}.csv")
+CSV_FILE = os.path.join(CSV_DIR, f"aide_logs_{str(counter)}.csv")
 
 # Define regex to extract required log data
 log_pattern = re.compile(r'(\w+ \d+ \d+:\d+:\d+) (\S+) aide: Start timestamp: (.+)')
+
+
+def counter() -> int:
+    """Counts plus one digit every day.
+    
+    :returns: int.
+    """
+    time.sleep(86400)
+    _counter: int = 0
+    _counter += 1
+    return _counter
 
 
 def extract_logs(log_dir) -> list:
