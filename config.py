@@ -9,3 +9,5 @@ CSV_FILE = os.path.join(CSV_DIR, f"aide_logs_{datetime.now().strftime('%Y%m%d')}
 
 # Define regex eo extract required log data
 LOG_PATTERN = re.compile(r'(\w+ \d+ \d+:\d+:\d+) (\S+) aide: Start timestamp: (.+)')
+
+LIST_OF_LOGS = []
