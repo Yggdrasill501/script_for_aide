@@ -1,19 +1,11 @@
 """Main module saves AIDE logs into path"""
 import os
 import csv
-import re
-from datetime import datetime
+import logging
 
-LOG_DIR = "/var/log/remote/aide" # Define log directory and output CSV file
-LOG_DIR = "/var/log/remote/aide"
-CSV_DIR = "/path/to/csv"
-CSV_FILE = os.path.join(CSV_DIR, f"aide_logs_{datetime.now().strftime('%Y%m%d')}.csv")
+logging.basicConfig()
 
-# Define regex to extract required log data
-log_pattern = re.compile(r'(\w+ \d+ \d+:\d+:\d+) (\S+) aide: Start timestamp: (.+)')
-
-
-def extract_logs(log_dir: str, log_list: list) -> list:
+def extract_logs(log_dir: str, log_list: list, log_pattern: ) -> list | bool:
     """Extracts logs from given diretory
 
     :param log_dir: str, path to directory.
@@ -23,20 +15,23 @@ def extract_logs(log_dir: str, log_list: list) -> list:
     for root, _, files in os.walk(log_dir):
         for file in files:
             file_path = os.path.join(root, file)
-            with open(file_path, 'r') as f:
-                for line in f:
-                    match = log_pattern.search(line)
-                    if match:
-                        log_time, server, timestamp = match.groups()
-                        log_list.append({
-                            "log_time": log_time,
-                            "server": server,
-                            "timestamp": timestamp
-                        })
+            try: 
+                with open(file_path, 'r') as f:
+                    for line in f:
+                        match = log_pattern.search(line)
+                        if match:
+                            log_time, server, timestamp = match.groups()
+                            log_list.append({
+                                "log_time": log_time,
+                                "server": server,
+                                "timestamp": timestamp
+                            })
+            except FileNotFoundError:
+                return False
     return log_list
 
 
-def transform_to_csv(log_list: list, csv_file: str) -> None:
+def transform_to_csv(log_list: list, csv_file: str) -> None | bool:
     """Transforms logs to CSV format
 
     :param log_list: list, list of logs.
@@ -44,11 +39,15 @@ def transform_to_csv(log_list: list, csv_file: str) -> None:
     :returns: None.
     """
     fieldnames = ["log_time", "server", "timestamp"]
-    with open(csv_file, 'w', newline=' ') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for log in log_list:
-            writer.writerow(log)
+    try:
+        with open(csv_file, 'w', newline=' ') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            for log in log_list:
+                writer.writerow(log)
+    except FileNotFoundError as error: 
+# logging.error(msg=f"Tranforming csv failed because the desired path does not exist, exception: {error}")
+        return False
 
 LIST_OF_LOGS = []
 
